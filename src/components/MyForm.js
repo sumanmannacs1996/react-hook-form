@@ -19,6 +19,8 @@ function MyForm() {
         },
         phoneNumbers: ["", ""],
         phNumbers: [{ number: "" }],
+        age: 0,
+        dob: new Date(),
       };
     },
   });
@@ -211,6 +213,38 @@ function MyForm() {
           <button type="button" onClick={() => append({ number: "" })}>
             +
           </button>
+        </div>
+
+        <div className="form-control">
+          <label htmlFor="age">Age</label>
+          <input
+            type="text"
+            id="age"
+            {...register("age", {
+              valueAsNumber: true,
+              required: {
+                value: true,
+                message: "age is required!",
+              },
+            })}
+          />
+          <p className="error">{errors.age?.message}</p>
+        </div>
+
+        <div className="form-control">
+          <label htmlFor="dob">DOB</label>
+          <input
+            type="date"
+            id="dob"
+            {...register("dob", {
+              valueAsDate: true,
+              required: {
+                value: true,
+                message: "dob is required!",
+              },
+            })}
+          />
+          <p className="error">{errors.dob?.message}</p>
         </div>
 
         <br />
