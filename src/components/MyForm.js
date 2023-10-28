@@ -23,6 +23,7 @@ function MyForm() {
         dob: new Date(),
       };
     },
+    mode: "all", //onChange, onTouched, onBlur
   });
   const {
     register,
@@ -32,8 +33,9 @@ function MyForm() {
     watch,
     getValues,
     setValue,
+    reset,
   } = form;
-  const { errors } = formState;
+  const { errors, isValid, isSubmitSuccessful } = formState;
 
   const { fields, append, remove } = useFieldArray({
     name: "phNumbers",
@@ -51,6 +53,12 @@ function MyForm() {
   const handleSetValue = () => {
     setValue("username", "Suman Manna");
   };
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
 
   useEffect(() => {
     const subscribe = watch((data) => {
@@ -96,6 +104,15 @@ function MyForm() {
                 norBlackListed: (fieldValue) =>
                   !fieldValue.endsWith("baddomain.com") ||
                   "This domain is not supported!",
+                alreadyExists: async (fieldValue) => {
+                  // if (fieldValue === getValues("email")) return true;
+                  const response = await fetch(
+                    `https://jsonplaceholder.typicode.com/users?email=${fieldValue}`
+                  );
+                  const data = await response.json();
+                  console.log("Email response", data);
+                  return data.length === 0 || "This email already exists!";
+                },
               },
             })}
           />
@@ -248,7 +265,9 @@ function MyForm() {
         </div>
 
         <br />
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={!isValid}>
+          Submit
+        </button>
         <button type="button" onClick={handleGetValues}>
           Get Values
         </button>
